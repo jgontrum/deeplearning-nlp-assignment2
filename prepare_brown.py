@@ -3,6 +3,11 @@ import pickle
 
 THRESHOLD = 5
 
+
+def get_infrequent_words():
+    with open('data/infrequent_brown_words.pickle', 'rb') as f:
+        return pickle.load(f)
+
 if __name__ == '__main__':
     token_frequency = {}
     for word in brown.words():
@@ -13,3 +18,5 @@ if __name__ == '__main__':
 
     with open('data/infrequent_brown_words.pickle', 'wb') as f:
         pickle.dump(too_infrequent_words, f)
+
+    print(len(get_infrequent_words()))
