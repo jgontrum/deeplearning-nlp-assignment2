@@ -10,4 +10,5 @@ ENV=`$PYTHON -c "import os; print(os.path.abspath(os.path.join(os.path.dirname(\
 
 # now run Python with the virtualenv set as Python's HOME
 export PYTHONHOME=$ENV
+export NLTK_DATA=${ENV}/nltk_data
 exec $PYTHON "$@"
