@@ -22,7 +22,7 @@ brown = BrownDataset()
 # x = context_matrix('features')
 
 # These are theano variables
-x = [tensor.fmatrix('context%s') % i for i in range(context * 2)]
+x = tensor.lmatrix('context')
 y = tensor.fmatrix('output')
 
 # Construct the graph
@@ -32,7 +32,9 @@ input_to_hidden = Linear(name='input_to_hidden', input_dim=INPUT_DIMS,
 # Compute the weight matrix for every word in the context and then compute
 # the average.
 # TODO Test if one could simply compute an average input vector beforehand
-h = sum([input_to_hidden.apply(x_) for x_ in x]) / len(x)
+h = tensor.mean(input_to_hidden.apply(x))
+
+print(h)
 
 hidden_to_output = Linear(name='hidden_to_output', input_dim=HIDDEN_DIMS,
                           output_dim=OUTPUT_DIMS)
@@ -51,7 +53,7 @@ cost = CategoricalCrossEntropy().apply(y, y_hat)
 cg = ComputationGraph(cost)
 
 data_stream = DataStream.default_stream(brown,
-                iteration_scheme=SequentialScheme(brown.num_instances(), 50))
+                iteration_scheme=SequentialScheme(brown.num_instances(), 10))
 
 # Now we tie up lose ends and construct the algorithm for the training
 # and define what happens in the main loop.
