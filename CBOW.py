@@ -6,12 +6,18 @@ from blocks.algorithms import GradientDescent, Scale
 from blocks.main_loop import MainLoop
 from theano import tensor
 from blocks.extensions import FinishAfter, Printing
+from fuel.streams import DataStream
+from fuel.schemes import SequentialScheme
+from BrownDataset import BrownDataset
 
 INPUT_DIMS = 500
 HIDDEN_DIMS = 100
 OUTPUT_DIMS = 200
 
 context = 1
+
+brown = BrownDataset()
+
 # context_matrix = TensorType('float32', (False,)*context)
 # x = context_matrix('features')
 
@@ -44,6 +50,8 @@ hidden_to_output.initialize()
 cost = CategoricalCrossEntropy().apply(y, y_hat)
 cg = ComputationGraph(cost)
 
+data_stream = DataStream.default_stream(brown,
+                iteration_scheme=SequentialScheme(brown.num_instances(), 50))
 
 # Now we tie up lose ends and construct the algorithm for the training
 # and define what happens in the main loop.
