@@ -23,15 +23,19 @@ import logging
 logger = logging.getLogger(__name__)
 
 def main():
-    if sys.argv:
+    if len(sys.argv) > 1:
         epochs = int(sys.argv[1])
         HIDDEN_DIMS = int(sys.argv[2])
         name = "./" + sys.argv[3] + "/"
+    else:
+        epochs = 10
+        HIDDEN_DIMS = 200
+        name = "./results/"
 
-        if not os.path.exists(name):
-            os.makedirs(name)
+    if not os.path.exists(name):
+        os.makedirs(name)
 
-        run(epochs, HIDDEN_DIMS, name)
+    run(epochs, HIDDEN_DIMS, name)
 
 
 def run(epochs=1, HIDDEN_DIMS=100, path="./"):
