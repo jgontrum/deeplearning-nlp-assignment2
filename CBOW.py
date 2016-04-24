@@ -15,25 +15,27 @@ from fuel.streams import DataStream
 from fuel.schemes import SequentialScheme
 from BrownDataset import BrownDataset
 from SaveWeightsExtension import SaveWeights
+import pickle
 import sys
 import os
+import logging
 
+logger = logging.getLogger(__name__)
 
 def main():
     if sys.argv:
-        context = int(sys.argv[1])
-        epochs = int(sys.argv[2])
-        HIDDEN_DIMS = int(sys.argv[3])
-        name = "./" + sys.argv[4] + "/"
+        epochs = int(sys.argv[1])
+        HIDDEN_DIMS = int(sys.argv[2])
+        name = "./" + sys.argv[3] + "/"
 
         if not os.path.exists(name):
             os.makedirs(name)
 
-        run(context, epochs, HIDDEN_DIMS, name)
+        run(epochs, HIDDEN_DIMS, name)
 
 
-def run(context, epochs=1, HIDDEN_DIMS=100, path="./"):
-    brown = BrownDataset(context=context)
+def run(epochs=1, HIDDEN_DIMS=100, path="./"):
+    brown = BrownDataset()
 
     INPUT_DIMS = brown.get_vocabulary_size()
 
@@ -82,7 +84,7 @@ def run(context, epochs=1, HIDDEN_DIMS=100, path="./"):
         ProgressBar(),
         FinishAfter(after_n_epochs=epochs),
         Printing(),
-        TrainingDataMonitoring(variables=[cost]),
+        # TrainingDataMonitoring(variables=[cost]),
         SaveWeights(layers=[input_to_hidden, hidden_to_output],
                     prefixes=['%sfirst' % path, '%ssecond' % path]),
         # Plot(
@@ -94,11 +96,14 @@ def run(context, epochs=1, HIDDEN_DIMS=100, path="./"):
         #     ])
     ]
 
+    logger.info("Starting main loop...")
     main = MainLoop(data_stream=data_stream,
                     algorithm=algorithm,
                     extensions=extensions)
 
     main.run()
+
+    pickle.dump(cg, open('%scg.pickle' % path, 'wb'))
 
 if __name__ == '__main__':
     main()

@@ -1,46 +1,37 @@
 from fuel.datasets.base import Dataset
 from prepare_brown import get_corpus_and_vocabulary
-import numpy as np
+import logging
 
 class BrownDataset(Dataset):
 
-    def __init__(self, context=2, **kwargs):
+    def __init__(self, **kwargs):
+        self.logger = logging.getLogger(__name__)
         self.provides_sources = ('context', 'output')
 
+        # self.corpus, self.vocabulary = get_corpus_and_vocabulary()
         self.corpus, self.vocabulary = get_corpus_and_vocabulary()
         self.vocabulary_size = len(self.vocabulary)
         self.corpus_size = len(self.corpus)
 
         self.iteration_index = 0
-        self.context = context
         super(BrownDataset, self).__init__(**kwargs)
-
-    def __active(self):
-        return self.iteration_index + self.context < self.corpus_size
-
-    def __get_next_window(self, index):
-        if not self.__active():
-            return None
-        index += self.context
-        assert index - self.context >= 0
-
-        before = self.corpus[index - self.context:
-                             index]
-
-        after = self.corpus[index + 1:
-                            index + self.context + 1]
-
-        return np.concatenate([before, after]), self.corpus[index]
+        self.logger.info('Corpus is prepared.')
 
     def num_instances(self):
-        return self.corpus_size - self.context * 2
+        return self.corpus_size
 
     def get_data(self, state=None, request=None):
+        self.logger.info('Requesting data for %s to %s' % (request[0],
+                                                           request[-1] + 1))
         if not request:
             request = [self.iteration_index]
             self.iteration_index += 1
-        x, y = zip(*[self.__get_next_window(i) for i in request])
-        return np.array(x), np.array(y, dtype='int32')
+
+        context = self.corpus[request[0]:request[-1] + 1]
+        output = self.vocabulary[request[0]:request[-1] + 1]
+
+        self.logger.info('Returning data...')
+        return context, output
 
     def get_vocabulary_size(self):
         return self.vocabulary_size
