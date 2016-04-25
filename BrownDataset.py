@@ -1,5 +1,6 @@
 from fuel.datasets.base import Dataset
-from prepare_brown import get_corpus_and_vocabulary
+import pickle
+import numpy as np
 import logging
 
 
@@ -11,8 +12,12 @@ class BrownDataset(Dataset):
         self.axis_labels = None
 
         self.logger.info("Loading corpus from %s" % path)
-        self.corpus, self.vocabulary = get_corpus_and_vocabulary(path)
-        self.vocabulary_size = len(self.vocabulary)
+        self.corpus, self.labels = np.load(
+            '%scorpus_x.npy' % path), np.load('%scorpus_y.npy' % path)
+        self.signature = pickle.load(open('%ssignature.pickle' % path, 'rb'))
+
+        self.vocabulary_size = self.signature.get_vocabulary_size()
+        
         self.corpus_size = len(self.corpus)
 
         self.iteration_index = 0
@@ -30,7 +35,7 @@ class BrownDataset(Dataset):
             self.iteration_index += 1
 
         context = self.corpus[request[0]:request[-1] + 1]
-        output = self.vocabulary[request[0]:request[-1] + 1]
+        output = self.labels[request[0]:request[-1] + 1]
 
         # self.logger.info('Returning data...')
         return context, output

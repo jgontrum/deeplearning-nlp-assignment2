@@ -31,11 +31,6 @@ def main():
     pickle.dump(signature, open('%ssignature.pickle' % path, 'wb'))
 
 
-def get_corpus_and_vocabulary(path):
-    logger.info("Loading '%scorpus_x.npy'"  % path)
-    return np.load('%scorpus_x.npy' % path), np.load('%scorpus_y.npy' % path)
-
-
 def read_corpus(CONTEXT):
     sig = Signature()
     token_frequency = {}
