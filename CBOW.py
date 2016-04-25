@@ -79,7 +79,7 @@ def run(epochs=1, corpus="data/", HIDDEN_DIMS=100, path="./"):
     cost = cost + 0.01 * (W1 ** 2).sum() + 0.01 * (W2 ** 2).sum()
     cost.name = 'cost_with_regularization'
 
-    mini_batch = SequentialScheme(brown.num_instances(), 250)
+    mini_batch = SequentialScheme(brown.num_instances(), 512)
     data_stream = DataStream.default_stream(brown, iteration_scheme=mini_batch)
 
     # Now we tie up lose ends and construct the algorithm for the training

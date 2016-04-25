@@ -26,6 +26,7 @@ def main():
                                                             'corpus_y'))
     np.save('%scorpus_x' % path, x)
     np.save('%scorpus_y' % path, y)
+    np.save('%svocabulary' % path, np.array(signature.int_to_word))
 
     logger.info("Saving the signature to '%s%s'" % (path, 'signature.pickle'))
     pickle.dump(signature, open('%ssignature.pickle' % path, 'wb'))
