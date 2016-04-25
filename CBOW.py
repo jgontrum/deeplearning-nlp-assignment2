@@ -24,22 +24,25 @@ logger = logging.getLogger(__name__)
 
 def main():
     if len(sys.argv) > 1:
+        print(sys.argv)
         epochs = int(sys.argv[1])
         HIDDEN_DIMS = int(sys.argv[2])
-        name = "./" + sys.argv[3] + "/"
+        path = sys.argv[3]
+        name = "./" + sys.argv[4] + "/"
     else:
         epochs = 10
         HIDDEN_DIMS = 200
         name = "./results/"
+        path = "data/"
 
     if not os.path.exists(name):
         os.makedirs(name)
 
-    run(epochs, HIDDEN_DIMS, name)
+    run(epochs, path, HIDDEN_DIMS, name)
 
 
-def run(epochs=1, HIDDEN_DIMS=100, path="./"):
-    brown = BrownDataset()
+def run(epochs=1, corpus="data/", HIDDEN_DIMS=100, path="./"):
+    brown = BrownDataset(corpus)
 
     INPUT_DIMS = brown.get_vocabulary_size()
 

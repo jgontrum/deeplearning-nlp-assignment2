@@ -5,12 +5,13 @@ import logging
 
 class BrownDataset(Dataset):
 
-    def __init__(self, **kwargs):
+    def __init__(self, path="data/", **kwargs):
         self.logger = logging.getLogger(__name__)
         self.provides_sources = ('context', 'output')
         self.axis_labels = None
 
-        self.corpus, self.vocabulary = get_corpus_and_vocabulary()
+        self.logger.info("Loading corpus from %s" % path)
+        self.corpus, self.vocabulary = get_corpus_and_vocabulary(path)
         self.vocabulary_size = len(self.vocabulary)
         self.corpus_size = len(self.corpus)
 
