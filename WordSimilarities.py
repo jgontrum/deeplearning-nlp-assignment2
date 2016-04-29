@@ -93,4 +93,5 @@ if __name__ == '__main__':
     f = open(res, "w")
     for i, idx in enumerate(sim.evaluate_n_best()):
         f.write("%s,%s" % (i, idx))
+        f.flush()
     f.close()
